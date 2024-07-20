@@ -144,7 +144,7 @@ public final class ActivityIndicator<A>: Sendable where A: ActivityIndicatorType
     ///                  from the main thread (e.g. to call
     ///                  `activity.outputActivityIndicator(to:state:)` as with
     ///                  the public `fail()` and `succeed()` implementations.
-    private func stop() {
+    public func stop() {
         self.timer.cancel()
         self.stopGroup.wait()
         self.timer.setEventHandler {}
