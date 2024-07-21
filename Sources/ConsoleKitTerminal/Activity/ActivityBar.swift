@@ -23,14 +23,21 @@ public protocol ActivityBar: ActivityIndicatorType {
 extension ActivityBar {
     /// See `ActivityIndicatorType`.
     public func outputActivityIndicator(to console: any Console, state: ActivityIndicatorState) {
-        let bar: ConsoleText
-        switch state {
-        case .ready: bar = "[]"
-        case .active(let tick): bar = renderActiveBar(tick: tick, width: console.activityBarWidth)
-        case .success: bar = "[Done]".consoleText(.success)
-        case .failure: bar = "[Failed]".consoleText(.error)
+        let maxBarWidth = max(min(console.activityBarWidth, console.size.width - 4), 0)
+        let bar: ConsoleText = switch state {
+        case .ready: "[]"
+        case .active(let tick): renderActiveBar(tick: tick, width: maxBarWidth)
+        case .success: "[Done]".consoleText(.success)
+        case .failure: "[Failed]".consoleText(.error)
         }
-        console.output(title.consoleText(.plain) + " " + bar)
+        let actualBarWith = bar.count
+        
+        let textWidth = console.size.width - (actualBarWith+1)
+        if textWidth >= title.count {
+            console.output(title.consoleText(.plain) + " " + bar)
+        } else {
+            console.output((title.prefix(max(0, textWidth-1)) + "… ").consoleText(.plain) + bar)
+        }
     }
 }
 
